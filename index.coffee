@@ -1,14 +1,3 @@
-class HelperMainView extends KDView
-
-  constructor:(options = {}, data)->
-    options.cssClass = 'Helper main-view'
-    super options, data
-
-  viewAppended:->
-    @addSubView new KDView
-      partial  : "Welcome to Helper app!"
-      cssClass : "welcome-view"
-
 class HelperController extends AppController
 
   constructor:(options = {}, data)->

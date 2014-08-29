@@ -14,12 +14,16 @@
     "blocks": {
       "app": {
         "files": [
+          "./main.coffee",
           "./index.coffee"
         ]
       }
     },
     "stylesheets": [
       "./resources/style.css"
+    ],
+    "less": [
+      "./less/index.less"
     ]
   },
   "options": {

@@ -1,0 +1,60 @@
+.Helper .button {
+  background: #eee;
+
+  height: auto;
+  width: auto;
+  max-width: 300px;
+
+  padding:10px;
+  margin: 50px auto;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  text-align:center;
+  cursor: pointer;
+}
+
+.new-kdmodal {
+  .topics-header,
+  .message-footer {
+    color: #555;
+  }
+
+  .topics-header {
+    margin-bottom: 5px;
+  }
+
+  .message-footer {
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: disc;
+    padding-left: 25px;
+    margin-bottom: 10px;
+
+    li {
+      display: list-item;
+      padding: 5px 0 0 0;
+    }
+  }
+
+  a, .link {
+    color: #2379B1;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+
+      &:active {
+        color: darken(#2379B1, 10%);
+      }
+    }
+  }
+
+  textarea {
+    min-height: 150px;
+  }
+}
