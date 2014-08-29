@@ -26,12 +26,12 @@ class HelperMainView extends KDView
         <div class="container">
           <div class="topics-header">Here's a quick list of popular help topics:</div>
           <ul>
-            <a href="http://learn.koding.com/faq/what-is-my-sudo-password" target="_blank">What Is My Sudo Password?</a>
-            <a href="http://learn.koding.com/faq/open-ports" target="_blank">What Ports Are Open On My Koding VM?</a>
-            <a href="http://learn.koding.com/faq/vm-poweroff" target="_blank">How Do Turn Off My My Koding VM?</a>
+            <li><a href="http://learn.koding.com/faq/what-is-my-sudo-password" target="_blank">What Is My Sudo Password?</a></li>
+            <li><a href="http://learn.koding.com/faq/open-ports" target="_blank">What Ports Are Open On My Koding VM?</a></li>
+            <li><a href="http://learn.koding.com/faq/vm-poweroff" target="_blank">How Do Turn Off My My Koding VM?</a></li>
           </ul>
           <div class="message-footer">
-            Still need help, check out <a href="http://learn.koding.com/faq/" target="_blank">Koding FAQs</a>
+            Still need help? Check out <a href="http://learn.koding.com/faq/" target="_blank">Koding FAQs</a>
             for more info.
           </div>
         </div>
@@ -60,53 +60,18 @@ class HelperMainView extends KDView
               message         :
                 type          : "textarea"
                 placeholder   : """
-                  Detailed message about your problem. If it is a techincal issue, please also provide what caused the issue.
+                  Detailed message about your problem. If it is a techincal issue, please also provide what caused the issue and a link to a screenshot.
                 """
                 validate      :
                   rules       :
                     required  : yes
 
   submitForm: (subject, message)->
-    {profile} = KD.userAccount
-
-    KD.userAccount.fetchEmail().then (emails)=>
-      customer = {
-        firstName: profile.firstName
-        lastName: profile.lastName
-        email: emails[0]
-        type: "customer"
-      }
-
-      $.ajax
-        url: "#{@helpScout}/mailboxes.json"
-        type: "GET"
-        beforeSend: (xhr)=>
-          xhr.setRequestHeader "Authorization", "Basic #{@helpScoutKey}"
-      .done (results)=>
-        mailbox = results.items[0]
-
-        $.ajax
-          type: "POST"
-          crossDomain: true
-          url: "#{@helpScout}/conversations.json"
-          contentType: "application/json"
-          beforeSend: (xhr)=>
-            xhr.setRequestHeader "Authorization", "Basic #{@helpScoutKey}"
-          data:
-            conversation:
-              customer: customer
-              subject: subject
-              mailbox: mailbox
-              threads: [
-                type: "customer"
-                createdBy: customer
-                body: message
-              ]
-        .done ->
-          console.log arguments
-
-        .fail ->
-          console.log arguments
-
-      .fail ->
-          console.log arguments
+    KD.userAccount.fetchEmail().then (email)=>
+      $.post "https://bvallelunga.kd.io:3001",
+        email: email
+        subject: subject
+        message: message
+      , ->
+        console.log arguments
+    .catch -> console.log arguments
