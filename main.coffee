@@ -3,16 +3,6 @@ class HelperMainView extends KDView
   constructor:(options = {}, data)->
     @helpScoutKey = btoa "f148161d4f55f6e359db6c110dcaec6eb2b5bebc:x"
     @helpScout = "https://api.helpscout.net/v1"
-    @popularTopics = [
-        "name": "What Is My Sudo Password?"
-        "link": "http://learn.koding.com/faq/what-is-my-sudo-password"
-      ,
-        "name": "What Ports Are Open On My Koding VM?"
-        "link": "http://learn.koding.com/faq/open-ports"
-      ,
-        "name": "How Do Turn Off My My Koding VM?"
-        "link": "http://learn.koding.com/faq/vm-poweroff"
-    ]
 
     options.cssClass = 'Helper main-view'
     super options, data
@@ -26,14 +16,6 @@ class HelperMainView extends KDView
   helperModal:->
     @modal.destroy() if @modal?
 
-    listItems = $.map @popularTopics, (topic)->
-      return """
-        <li>
-          <a href="#{topic.link}" target="_blank">#{topic.name}</a>
-        </li>
-      """
-    .join("")
-
     @modal = new KDModalViewWithForms
       title                   : "Koding Support"
       overlay                 : yes
@@ -43,7 +25,11 @@ class HelperMainView extends KDView
       content                 : """
         <div class="container">
           <div class="topics-header">Here's a quick list of popular help topics:</div>
-          <ul>#{listItems}</ul>
+          <ul>
+            <a href="http://learn.koding.com/faq/what-is-my-sudo-password" target="_blank">What Is My Sudo Password?</a>
+            <a href="http://learn.koding.com/faq/open-ports" target="_blank">What Ports Are Open On My Koding VM?</a>
+            <a href="http://learn.koding.com/faq/vm-poweroff" target="_blank">How Do Turn Off My My Koding VM?</a>
+          </ul>
           <div class="message-footer">
             Still need help, check out <a href="http://learn.koding.com/faq/" target="_blank">Koding FAQs</a>
             for more info.

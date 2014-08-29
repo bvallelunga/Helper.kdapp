@@ -1,9 +1,6 @@
-/* Compiled by kdc on Fri Aug 29 2014 02:25:21 GMT+0000 (UTC) */
+/* Compiled by kdc on Fri Aug 29 2014 02:37:35 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
-if (typeof window.appPreview !== "undefined" && window.appPreview !== null) {
-  var appView = window.appPreview
-}
 /* BLOCK STARTS: /home/bvallelunga/Applications/Helper.kdapp/main.coffee */
 var HelperMainView,
   __hasProp = {}.hasOwnProperty,
@@ -35,19 +32,19 @@ HelperMainView = (function(_super) {
   }
 
   HelperMainView.prototype.viewAppended = function() {
+    var _this = this;
     return this.addSubView(new KDView({
       partial: "helper",
       cssClass: "button",
-      click: (function(_this) {
-        return function() {
-          return _this.helperModal();
-        };
-      })(this)
+      click: function() {
+        return _this.helperModal();
+      }
     }));
   };
 
   HelperMainView.prototype.helperModal = function() {
-    var listItems;
+    var listItems,
+      _this = this;
     if (this.modal != null) {
       this.modal.destroy();
     }
@@ -64,13 +61,11 @@ HelperMainView = (function(_super) {
       cssClass: "new-kdmodal",
       tabs: {
         navigable: true,
-        callback: (function(_this) {
-          return function(form) {
-            _this.modal.destroy();
-            delete _this.modal;
-            return _this.submitForm(form.subject, form.message);
-          };
-        })(this),
+        callback: function(form) {
+          _this.modal.destroy();
+          delete _this.modal;
+          return _this.submitForm(form.subject, form.message);
+        },
         forms: {
           "Koding Passwords": {
             buttons: {
@@ -107,58 +102,57 @@ HelperMainView = (function(_super) {
   };
 
   HelperMainView.prototype.submitForm = function(subject, message) {
-    var profile;
+    var profile,
+      _this = this;
     profile = KD.userAccount.profile;
-    return KD.userAccount.fetchEmail().then((function(_this) {
-      return function(emails) {
-        var customer;
-        customer = {
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          email: emails[0],
-          type: "customer"
-        };
+    return KD.userAccount.fetchEmail().then(function(emails) {
+      var customer;
+      customer = {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: emails[0],
+        type: "customer"
+      };
+      return $.ajax({
+        url: "" + _this.helpScout + "/mailboxes.json",
+        type: "GET",
+        beforeSend: function(xhr) {
+          return xhr.setRequestHeader("Authorization", "Basic " + _this.helpScoutKey);
+        }
+      }).done(function(results) {
+        var mailbox;
+        mailbox = results.items[0];
         return $.ajax({
-          url: "" + _this.helpScout + "/mailboxes.json",
-          type: "GET",
+          type: "POST",
+          crossDomain: true,
+          url: "" + _this.helpScout + "/conversations.json",
+          contentType: "application/json",
           beforeSend: function(xhr) {
             return xhr.setRequestHeader("Authorization", "Basic " + _this.helpScoutKey);
-          }
-        }).done(function(results) {
-          var mailbox;
-          mailbox = results.items[0];
-          return $.ajax({
-            type: "POST",
-            crossDomain: true,
-            url: "" + _this.helpScout + "/conversations.json",
-            contentType: "application/json",
-            beforeSend: function(xhr) {
-              return xhr.setRequestHeader("Authorization", "Basic " + _this.helpScoutKey);
-            },
-            data: {
-              conversation: {
-                customer: customer,
-                subject: subject,
-                mailbox: mailbox,
-                threads: [
-                  {
-                    type: "customer",
-                    createdBy: customer,
-                    body: message
-                  }
-                ]
-              }
+          },
+          data: {
+            conversation: {
+              customer: customer,
+              subject: subject,
+              mailbox: mailbox,
+              threads: [
+                {
+                  type: "customer",
+                  createdBy: customer,
+                  body: message
+                }
+              ]
             }
-          }).done(function() {
-            return console.log(arguments);
-          }).fail(function() {
-            return console.log(arguments);
-          });
+          }
+        }).done(function() {
+          return console.log(arguments);
         }).fail(function() {
           return console.log(arguments);
         });
-      };
-    })(this));
+      }).fail(function() {
+        return console.log(arguments);
+      });
+    });
   };
 
   return HelperMainView;
