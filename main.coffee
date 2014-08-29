@@ -26,70 +26,31 @@ class HelperMainView extends KDView
   helperModal:->
     @modal.destroy() if @modal?
 
-    container = new KDCustomHTMLView
-
-    container.addSubView new KDCustomHTMLView
-      cssClass: "topics-header"
-      partial : "Here's a quick list of popular help topics:"
-
-    container.addSubView list = new KDCustomHTMLView
-      tagName : "ul"
-
-    for topic in @popularTopics
-      list.addSubView item = new KDCustomHTMLView
-        tagName : "li"
-
-      item.addSubView new KDCustomHTMLView
-        tagName     : "a"
-        partial     : topic.name
-        attributes  :
-          href  : topic.link
-          target: "_blank"
-
-    container.addSubView message = new KDCustomHTMLView
-      cssClass: "message-footer"
-      partial : "Still need help? Check out "
-
-    message.addSubView new KDCustomHTMLView
-      tagName     : "a"
-      partial     : "Koding FAQs"
-      attributes  :
-        href  : "http://learn.koding.com/faq/"
-        target: "_blank"
-
-    message.addSubView message = new KDCustomHTMLView
-      tagName : "span"
-      partial : " or "
-
-    message.addSubView @questionLink = new KDCustomHTMLView
-      tagName : "span"
-      partial : "ask us a question here"
-      cssClass: "link"
-      click   : => @formModal()
-
-    message.addSubView new KDCustomHTMLView
-      tagName : "span"
-      partial : "."
-
-    @modal = new KDModalView
-      title           : "Koding Support"
-      overlay         : yes
-      overlayClick    : yes
-      width           : 500
-      height          : "auto"
-      cssClass        : "new-kdmodal"
-      view            : container
-
-  formModal:->
-    @modal.destroy() if @modal?
+    listItems = $.map @popularTopics, (topic)->
+      return """
+        <li>
+          <a href="#{topic.link}" target="_blank">#{topic.name}</a>
+        </li>
+      """
+    .join("")
 
     @modal = new KDModalViewWithForms
-      title           : "Koding Support"
-      overlay         : yes
-      overlayClick    : yes
-      width           : 500
-      height          : "auto"
-      cssClass        : "new-kdmodal"
+      title                   : "Koding Support"
+      overlay                 : yes
+      overlayClick            : yes
+      width                   : 700
+      height                  : "auto"
+      content                 : """
+        <div class="container">
+          <div class="topics-header">Here's a quick list of popular help topics:</div>
+          <ul>#{listItems}</ul>
+          <div class="message-footer">
+            Still need help, check out <a href="http://learn.koding.com/faq/" target="_blank">Koding FAQs</a>
+            for more info.
+          </div>
+        </div>
+      """
+      cssClass                : "new-kdmodal"
       tabs                    :
         navigable             : yes
         callback              : (form)=>

@@ -1,4 +1,4 @@
-/* Compiled by kdc on Fri Aug 29 2014 01:23:14 GMT+0000 (UTC) */
+/* Compiled by kdc on Fri Aug 29 2014 02:25:21 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
 if (typeof window.appPreview !== "undefined" && window.appPreview !== null) {
@@ -47,84 +47,20 @@ HelperMainView = (function(_super) {
   };
 
   HelperMainView.prototype.helperModal = function() {
-    var container, item, list, message, topic, _i, _len, _ref;
+    var listItems;
     if (this.modal != null) {
       this.modal.destroy();
     }
-    container = new KDCustomHTMLView;
-    container.addSubView(new KDCustomHTMLView({
-      cssClass: "topics-header",
-      partial: "Here's a quick list of popular help topics:"
-    }));
-    container.addSubView(list = new KDCustomHTMLView({
-      tagName: "ul"
-    }));
-    _ref = this.popularTopics;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      topic = _ref[_i];
-      list.addSubView(item = new KDCustomHTMLView({
-        tagName: "li"
-      }));
-      item.addSubView(new KDCustomHTMLView({
-        tagName: "a",
-        partial: topic.name,
-        attributes: {
-          href: topic.link,
-          target: "_blank"
-        }
-      }));
-    }
-    container.addSubView(message = new KDCustomHTMLView({
-      cssClass: "message-footer",
-      partial: "Still need help? Check out "
-    }));
-    message.addSubView(new KDCustomHTMLView({
-      tagName: "a",
-      partial: "Koding FAQs",
-      attributes: {
-        href: "http://learn.koding.com/faq/",
-        target: "_blank"
-      }
-    }));
-    message.addSubView(message = new KDCustomHTMLView({
-      tagName: "span",
-      partial: " or "
-    }));
-    message.addSubView(this.questionLink = new KDCustomHTMLView({
-      tagName: "span",
-      partial: "ask us a question here",
-      cssClass: "link",
-      click: (function(_this) {
-        return function() {
-          return _this.formModal();
-        };
-      })(this)
-    }));
-    message.addSubView(new KDCustomHTMLView({
-      tagName: "span",
-      partial: "."
-    }));
-    return this.modal = new KDModalView({
-      title: "Koding Support",
-      overlay: true,
-      overlayClick: true,
-      width: 500,
-      height: "auto",
-      cssClass: "new-kdmodal",
-      view: container
-    });
-  };
-
-  HelperMainView.prototype.formModal = function() {
-    if (this.modal != null) {
-      this.modal.destroy();
-    }
+    listItems = $.map(this.popularTopics, function(topic) {
+      return "<li>\n  <a href=\"" + topic.link + "\" target=\"_blank\">" + topic.name + "</a>\n</li>";
+    }).join("");
     return this.modal = new KDModalViewWithForms({
       title: "Koding Support",
       overlay: true,
       overlayClick: true,
-      width: 500,
+      width: 700,
       height: "auto",
+      content: "<div class=\"container\">\n  <div class=\"topics-header\">Here's a quick list of popular help topics:</div>\n  <ul>" + listItems + "</ul>\n  <div class=\"message-footer\">\n    Still need help, check out <a href=\"http://learn.koding.com/faq/\" target=\"_blank\">Koding FAQs</a>\n    for more info.\n  </div>\n</div>",
       cssClass: "new-kdmodal",
       tabs: {
         navigable: true,
