@@ -1,4 +1,4 @@
-/* Compiled by kdc on Fri Aug 29 2014 22:42:28 GMT+0000 (UTC) */
+/* Compiled by kdc on Sat Aug 30 2014 00:50:21 GMT+0000 (UTC) */
 (function() {
 /* KDAPP STARTS */
 if (typeof window.appPreview !== "undefined" && window.appPreview !== null) {
@@ -16,8 +16,6 @@ HelperMainView = (function(_super) {
     if (options == null) {
       options = {};
     }
-    this.helpScoutKey = btoa("f148161d4f55f6e359db6c110dcaec6eb2b5bebc:x");
-    this.helpScout = "https://api.helpscout.net/v1";
     options.cssClass = 'Helper main-view';
     HelperMainView.__super__.constructor.call(this, options, data);
   }
@@ -26,11 +24,7 @@ HelperMainView = (function(_super) {
     return this.addSubView(new KDView({
       partial: "helper",
       cssClass: "button",
-      click: (function(_this) {
-        return function() {
-          return _this.helperModal();
-        };
-      })(this)
+      click: this.bound("helperModal")
     }));
   };
 
@@ -43,7 +37,6 @@ HelperMainView = (function(_super) {
       overlay: true,
       overlayClick: true,
       width: 700,
-      height: "auto",
       content: "<div class=\"container\">\n  <div class=\"topics-header\">Here's a quick list of popular help topics:</div>\n  <ul>\n    <li><a href=\"http://learn.koding.com/faq/what-is-my-sudo-password\" target=\"_blank\">What Is My Sudo Password?</a></li>\n    <li><a href=\"http://learn.koding.com/faq/open-ports\" target=\"_blank\">What Ports Are Open On My Koding VM?</a></li>\n    <li><a href=\"http://learn.koding.com/faq/vm-poweroff\" target=\"_blank\">How Do Turn Off My My Koding VM?</a></li>\n  </ul>\n  <div class=\"message-footer\">\n    Still need help? Check out <a href=\"http://learn.koding.com/faq/\" target=\"_blank\">Koding FAQs</a>\n    for more info.\n  </div>\n</div>",
       cssClass: "new-kdmodal",
       tabs: {
@@ -51,7 +44,7 @@ HelperMainView = (function(_super) {
         callback: (function(_this) {
           return function(form) {
             _this.modal.destroy();
-            delete _this.modal;
+            _this.modal = void 0;
             return _this.submitForm(form.subject, form.message);
           };
         })(this),
@@ -91,18 +84,25 @@ HelperMainView = (function(_super) {
   };
 
   HelperMainView.prototype.submitForm = function(subject, message) {
-    return KD.userAccount.fetchEmail().then((function(_this) {
-      return function(email) {
-        return $.post("https://bvallelunga.kd.io:3001", {
-          email: email,
-          subject: subject,
-          message: message
-        }, function() {
-          return console.log(arguments);
-        });
-      };
-    })(this))["catch"](function() {
-      return console.log(arguments);
+    return KD.userAccount.fetchPlansAndSubscriptions({}).then(function(objects) {
+      return KD.userAccount.fetchEmail().then((function(_this) {
+        return function(email) {
+          var plan;
+          message += "\n----------------------------------------\nUser ID: " + (KD.nick()) + "\nUser Agent: " + navigator.userAgent + "\nUser Plans: " + ([
+            (function() {
+              var _i, _len, _ref, _results;
+              _ref = objects.plans;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                plan = _ref[_i];
+                _results.push(plan.description);
+              }
+              return _results;
+            })()
+          ].join(", "));
+          return console.log(message);
+        };
+      })(this));
     });
   };
 

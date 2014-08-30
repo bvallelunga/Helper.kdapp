@@ -1,9 +1,6 @@
 class HelperMainView extends KDView
 
   constructor:(options = {}, data)->
-    @helpScoutKey = btoa "f148161d4f55f6e359db6c110dcaec6eb2b5bebc:x"
-    @helpScout = "https://api.helpscout.net/v1"
-
     options.cssClass = 'Helper main-view'
     super options, data
 
@@ -11,7 +8,7 @@ class HelperMainView extends KDView
     @addSubView new KDView
       partial  : "helper"
       cssClass : "button"
-      click    : => @helperModal()
+      click    : @bound "helperModal"
 
   helperModal:->
     @modal.destroy() if @modal?
@@ -21,7 +18,6 @@ class HelperMainView extends KDView
       overlay                 : yes
       overlayClick            : yes
       width                   : 700
-      height                  : "auto"
       content                 : """
         <div class="container">
           <div class="topics-header">Here's a quick list of popular help topics:</div>
@@ -41,7 +37,7 @@ class HelperMainView extends KDView
         navigable             : yes
         callback              : (form)=>
           @modal.destroy()
-          delete @modal
+          @modal = undefined
           @submitForm form.subject, form.message
         forms                 :
           "Koding Passwords"  :
@@ -67,11 +63,16 @@ class HelperMainView extends KDView
                     required  : yes
 
   submitForm: (subject, message)->
-    KD.userAccount.fetchEmail().then (email)=>
-      $.post "https://bvallelunga.kd.io:3001",
-        email: email
-        subject: subject
-        message: message
-      , ->
-        console.log arguments
-    .catch -> console.log arguments
+    KD.userAccount.fetchPlansAndSubscriptions({}).then (objects)->
+      KD.userAccount.fetchEmail().then (email)=>
+        message += """
+
+        ----------------------------------------
+        User ID: #{KD.nick()}
+        User Agent: #{navigator.userAgent}
+        User Plans: #{ [plan.description for plan in objects.plans].join ", " }
+        """
+
+        # Replace with KD.userAccount....
+        # when Senthil creates the method endpoint
+        console.log message
